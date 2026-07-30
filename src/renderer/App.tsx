@@ -447,6 +447,8 @@ export function App() {
       }
     | undefined
   >(undefined);
+  const [initialized, setInitialized] = useState(false);
+  const [learningUseChecked, setLearningUseChecked] = useState(false);
   const [overlay, setOverlayMode] = useState<OverlayMode>("collapsed");
   const [browser, setBrowser] = useState<BrowserState>();
   const [snapshot, setSnapshot] = useState<AppSnapshot>();
@@ -571,12 +573,18 @@ export function App() {
 
   useEffect(() => {
     void Promise.all([
-      refreshSnapshot(),
+      window.practiceAPI.getSnapshot().then((next) => {
+        setSnapshot(next);
+        setInitialized(true);
+        const mode = next.learningUseAttestation ? "collapsed" : "bubble";
+        const contentHeight = next.learningUseAttestation ? 420 : 580;
+        setOverlayMode(mode);
+        return window.practiceAPI.setOverlay({ mode, contentHeight });
+      }),
       window.practiceAPI.getBrowserState().then((state) => {
         previousUrl.current = state.url;
         setBrowser(state);
-      }),
-      window.practiceAPI.setOverlay({ mode: "collapsed", contentHeight: 420 })
+      })
     ]);
     const removeBrowser = window.practiceAPI.onBrowserState((state) => {
       setBrowser(state);
@@ -974,6 +982,94 @@ export function App() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function confirmLearningUse() {
+    if (!learningUseChecked) return;
+    setBusy(true);
+    setNotice("");
+    try {
+      const attestation = await window.practiceAPI.acceptLearningUse();
+      setSnapshot((current) =>
+        current
+          ? { ...current, learningUseAttestation: attestation }
+          : current
+      );
+      setOverlay("collapsed", 420);
+    } catch (error) {
+      setNotice(messageOf(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!initialized) {
+    return <main className="overlay-root" />;
+  }
+
+  if (!snapshot?.learningUseAttestation) {
+    return (
+      <main className="overlay-root">
+        <section className="panel attestation-panel">
+          <header
+            className="panel-header drag-zone"
+            onPointerDown={beginDrag}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+          >
+            <span className="drag-indicator">
+              <Icon name="grip" size={18} />
+            </span>
+            <div className="header-copy">
+              <strong>Algo Companion</strong>
+              <span>首次使用确认</span>
+            </div>
+            <span className="header-spacer" />
+          </header>
+          <div className="attestation-content">
+            <div className="stage-label">学习用途</div>
+            <h1>只在练习时帮助你思考</h1>
+            <p>
+              本工具会读取当前题目、代码和运行结果。请确认仅用于个人学习或非营利教育。
+            </p>
+            <ul>
+              <li>不用于比赛、考试、面试或招聘测评</li>
+              <li>不用于商业服务、作弊或自动提交</li>
+              <li>遵守目标平台条款和内容权利</li>
+            </ul>
+            <label className="attestation-check">
+              <input
+                type="checkbox"
+                checked={learningUseChecked}
+                onChange={(event) =>
+                  setLearningUseChecked(event.target.checked)
+                }
+              />
+              <span>我确认仅将本工具用于个人学习和非营利教育。</span>
+            </label>
+            <button
+              className="primary attestation-accept"
+              type="button"
+              disabled={!learningUseChecked || busy}
+              onClick={() => void confirmLearningUse()}
+            >
+              {busy ? "正在保存" : "确认并进入"}
+            </button>
+            <button
+              className="attestation-exit"
+              type="button"
+              disabled={busy}
+              onClick={() => void window.practiceAPI.quitApp()}
+            >
+              不同意并退出
+            </button>
+            <small>确认记录只保存在本机，不会上传。</small>
+            {notice && <div className="inline-notice">{notice}</div>}
+          </div>
+        </section>
+      </main>
+    );
   }
 
   if (overlay === "collapsed") {

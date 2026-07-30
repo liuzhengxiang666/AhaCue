@@ -23,6 +23,10 @@ import {
   isSupportedPracticeUrl,
   normalizeNavigationUrl
 } from "../shared/workflow";
+import {
+  LEARNING_USE_SETTING,
+  parseLearningUseAttestation
+} from "../shared/use-attestation";
 import { DatabaseService } from "./database";
 import { registerIpc } from "./ipc";
 import {
@@ -135,10 +139,25 @@ function layoutWindows(): void {
   layoutOverlay();
 }
 
+function hasLearningUseAttestation(): boolean {
+  return Boolean(
+    database &&
+      parseLearningUseAttestation(
+        database.getSetting(LEARNING_USE_SETTING)
+      )
+  );
+}
+
 function setOverlay(mode: OverlayMode, contentHeight?: number): void {
-  overlayMode = mode;
+  overlayMode =
+    database && !hasLearningUseAttestation() && mode === "collapsed"
+      ? "bubble"
+      : mode;
   if (typeof contentHeight === "number" && contentHeight > 0) {
-    overlayContentHeight = contentHeight;
+    overlayContentHeight =
+      database && !hasLearningUseAttestation()
+        ? Math.max(580, contentHeight)
+        : contentHeight;
   }
   layoutOverlay();
 }
@@ -203,12 +222,14 @@ function handleBrowserShortcut(input: Input): void {
 }
 
 async function attachAdapter(): Promise<void> {
+  if (!hasLearningUseAttestation()) return;
   await adapterHost?.attach().catch(() => undefined);
 }
 
 async function pollAttempts(): Promise<void> {
   if (attemptPollBusy || !adapterHost || !database || !overlayWindow) return;
   if (currentBrowserState().restricted) return;
+  if (!hasLearningUseAttestation()) return;
   attemptPollBusy = true;
   try {
     const observed = await adapterHost.pollAttempt();
@@ -346,6 +367,14 @@ async function createWindow(): Promise<void> {
   const secrets = new SecretStore(app.getPath("userData"));
   await secrets.initialize();
   database = new DatabaseService(path.join(app.getPath("userData"), "practice.db"));
+  if (
+    !parseLearningUseAttestation(
+      database.getSetting(LEARNING_USE_SETTING)
+    )
+  ) {
+    overlayMode = "bubble";
+    overlayContentHeight = 580;
+  }
   const storedAnchor = database.getSetting(OVERLAY_ANCHOR_SETTING);
   if (storedAnchor) {
     try {
@@ -404,7 +433,8 @@ async function createWindow(): Promise<void> {
     undoEditorChange: () => {
       if (!adapterHost) throw new Error("自动适配器尚未初始化。");
       return adapterHost.undo();
-    }
+    },
+    quitApp: () => app.quit()
   });
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -437,7 +467,9 @@ async function createWindow(): Promise<void> {
   sendBrowserState();
   syncOverlayVisibility();
   attemptTimer = setInterval(() => void pollAttempts(), 1_200);
-  void providers.refreshFreeModels().catch(() => undefined);
+  if (hasLearningUseAttestation()) {
+    void providers.refreshFreeModels().catch(() => undefined);
+  }
 }
 
 app.whenReady().then(async () => {

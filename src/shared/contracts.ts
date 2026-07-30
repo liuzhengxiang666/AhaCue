@@ -308,10 +308,17 @@ export interface WorkflowRuntimeState {
   selectedMethod?: string;
 }
 
+export interface LearningUseAttestation {
+  version: number;
+  purpose: "personal_learning";
+  acceptedAt: string;
+}
+
 export interface AppSnapshot {
   providerSettings: ProviderSettings;
   recentProblems: ProblemSummary[];
   dueReviews: ReviewItem[];
+  learningUseAttestation?: LearningUseAttestation;
 }
 
 export interface ProviderKeyInput {
@@ -333,6 +340,8 @@ export interface ExportBundle {
 
 export interface PracticeAPI {
   getSnapshot(): Promise<AppSnapshot>;
+  acceptLearningUse(): Promise<LearningUseAttestation>;
+  quitApp(): Promise<void>;
   onBrowserState(listener: (state: BrowserState) => void): () => void;
   getBrowserState(): Promise<BrowserState>;
   navigate(url: string): Promise<BrowserState>;

@@ -333,6 +333,79 @@ button:disabled {
   font-size: 14px;
 }
 
+.attestation-content {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+}
+
+.attestation-content h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 21px;
+  line-height: 1.35;
+}
+
+.attestation-content > p {
+  margin: 0;
+  color: #d4d4d8;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.attestation-content ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.attestation-check {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 12px;
+  color: #e4e4e7;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.attestation-check input {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.attestation-accept,
+.attestation-exit {
+  width: 100%;
+}
+
+.attestation-exit {
+  color: var(--muted);
+  border-color: transparent;
+  background: transparent;
+}
+
+.attestation-content > small {
+  color: #737985;
+  font-size: 12px;
+  text-align: center;
+}
+
+.header-spacer {
+  width: 40px;
+}
+
 .compact-card {
   color: var(--text);
 }

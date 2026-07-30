@@ -16,6 +16,8 @@ import type {
 
 const api: PracticeAPI = {
   getSnapshot: () => ipcRenderer.invoke("app:snapshot"),
+  acceptLearningUse: () => ipcRenderer.invoke("learning-use:accept"),
+  quitApp: () => ipcRenderer.invoke("app:quit"),
   onBrowserState: (listener) => {
     const wrapped = (_event: Electron.IpcRendererEvent, state: BrowserState) => listener(state);
     ipcRenderer.on("browser:state-changed", wrapped);

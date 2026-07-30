@@ -17,6 +17,9 @@ affiliated with, endorsed by, sponsored by, or partnered with LeetCode, LLC,
   scripts into third-party pages, or intercept their network requests.
 - AI providers can change, throttle, log, or discontinue their services. Review
   a provider's terms before sending problem context or source code.
+- The first-use learning-purpose confirmation is stored locally as a product
+  safeguard. It is not identity verification, legal advice, or permission from
+  any third-party platform.
 
 The software is provided as-is, without warranties. This disclaimer does not
 grant permission to access, copy, extract, or reuse third-party content and
