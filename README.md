@@ -44,7 +44,7 @@ Algo Companion 是一个本地悬浮式算法陪练。安装后直接在应用�
 Ubuntu/Debian 可以执行：
 
 ```bash
-sudo apt install ./algo-companion_0.4.2_amd64.deb
+sudo apt install ./algo-companion_0.4.3_amd64.deb
 ```
 
 安装后：

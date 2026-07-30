@@ -73,18 +73,18 @@ describe("overlay geometry", () => {
   });
 
   it("clips the collapsed native window to a circle", () => {
-    const shape = collapsedOverlayShape(72);
-    const centerRow = shape.find((rectangle) => rectangle.y === 36);
+    const shape = collapsedOverlayShape(60);
+    const centerRow = shape.find((rectangle) => rectangle.y === 30);
 
-    expect(shape.length).toBeGreaterThan(60);
-    expect(centerRow?.width).toBeGreaterThan(68);
+    expect(shape.length).toBeGreaterThan(50);
+    expect(centerRow?.width).toBeGreaterThan(56);
     expect(
       shape.every(
         (rectangle) =>
           rectangle.x >= 0 &&
           rectangle.y >= 0 &&
-          rectangle.x + rectangle.width <= 72 &&
-          rectangle.y + rectangle.height <= 72
+          rectangle.x + rectangle.width <= 60 &&
+          rectangle.y + rectangle.height <= 60
       )
     ).toBe(true);
     expect(

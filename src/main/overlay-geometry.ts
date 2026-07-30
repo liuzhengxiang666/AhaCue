@@ -11,7 +11,7 @@ export interface Rect {
 }
 
 const MARGIN = 16;
-const COLLAPSED_SIZE = 72;
+const COLLAPSED_SIZE = 60;
 const BUBBLE_WIDTH = 440;
 const DRAWER_WIDTH = 520;
 

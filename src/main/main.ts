@@ -112,6 +112,9 @@ function layoutOverlay(): void {
     overlayContentHeight
   );
   overlayWindow.setBounds(bounds, false);
+  overlayWindow.setBackgroundColor(
+    overlayMode === "collapsed" ? "#00000000" : "#15171b"
+  );
   if (process.platform === "linux" || process.platform === "win32") {
     overlayWindow.setShape(
       overlayMode === "collapsed"

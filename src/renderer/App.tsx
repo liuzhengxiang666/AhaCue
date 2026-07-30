@@ -634,8 +634,10 @@ export function App() {
     let height = 300;
     if (overlay === "settings") {
       height = 680;
-    } else if (busy || !context?.recognized) {
+    } else if (busy) {
       height = 300;
+    } else if (!context?.recognized) {
+      height = 260;
     } else if (route === "menu") {
       height = canReview ? 430 : 350;
     } else if (latestCard?.type === "guided_start") {
@@ -647,7 +649,7 @@ export function App() {
     } else if (latestCard?.type === "hint" || latestCard?.type === "review") {
       height = 330;
     }
-    if (notice && height < 400) height += 56;
+    if (notice && context?.recognized && height < 400) height += 56;
     void window.practiceAPI.setOverlay({ mode: overlay, contentHeight: height });
   }, [
     overlay,
