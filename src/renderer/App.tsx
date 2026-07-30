@@ -1024,7 +1024,7 @@ export function App() {
               <Icon name="grip" size={18} />
             </span>
             <div className="header-copy">
-              <strong>Algo Companion</strong>
+              <strong>AhaCue</strong>
               <span>首次使用确认</span>
             </div>
             <span className="header-spacer" />
@@ -1309,6 +1309,10 @@ export function App() {
               </section>
             )}
             {notice && <div className="inline-notice">{notice}</div>}
+            <footer className="author-mark" aria-label="作者署名">
+              <strong>AhaCue</strong>
+              <span>© 2026 liuzhengxiang666</span>
+            </footer>
           </div>
         </section>
       </main>
@@ -1374,7 +1378,7 @@ export function App() {
             <Icon name="grip" size={18} />
           </span>
           <div className="header-copy">
-            <strong>{context?.draft?.title || "算法陪练"}</strong>
+            <strong>{context?.draft?.title || "AhaCue"}</strong>
             <span>
               {context?.recognized && context.draft
                 ? `已识别 · ${context.draft.language.toUpperCase()}`

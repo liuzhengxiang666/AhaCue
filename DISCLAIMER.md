@@ -1,6 +1,8 @@
 # Disclaimer
 
-Algo Companion is an independent, unofficial learning tool. It is not
+Required Notice: Copyright © 2026 liuzhengxiang666.
+
+AhaCue is an independent, unofficial learning tool. It is not
 affiliated with, endorsed by, sponsored by, or partnered with LeetCode, LLC,
 领扣网络（上海）有限公司, or any online assessment provider.
 

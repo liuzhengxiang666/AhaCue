@@ -289,8 +289,8 @@ export function registerIpc(deps: IpcDependencies): () => void {
   handle("data:export", async () => {
     const result = await dialog.showSaveDialog({
       title: "导出学习记录",
-      defaultPath: `algo-companion-${new Date().toISOString().slice(0, 10)}.json`,
-      filters: [{ name: "Algo Companion JSON", extensions: ["json"] }]
+      defaultPath: `ahacue-${new Date().toISOString().slice(0, 10)}.json`,
+      filters: [{ name: "AhaCue JSON", extensions: ["json"] }]
     });
     if (result.canceled || !result.filePath) return { canceled: true };
     await writeFile(result.filePath, JSON.stringify(deps.database.exportData(), null, 2), "utf8");
@@ -301,7 +301,7 @@ export function registerIpc(deps: IpcDependencies): () => void {
     const result = await dialog.showOpenDialog({
       title: "导入学习记录",
       properties: ["openFile"],
-      filters: [{ name: "Algo Companion JSON", extensions: ["json"] }]
+      filters: [{ name: "AhaCue JSON", extensions: ["json"] }]
     });
     const filePath = result.filePaths[0];
     if (result.canceled || !filePath) return { canceled: true };

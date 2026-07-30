@@ -1,10 +1,10 @@
-# Algo Companion
+# AhaCue
 
 [![CI](https://github.com/liuzhengxiang666/algo-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/liuzhengxiang666/algo-companion/actions/workflows/ci.yml)
 
 > Source-available for noncommercial use; not OSI-approved open source.
 
-Algo Companion 是一个本地悬浮式算法陪练。安装后直接在应用内打开刷题页面，
+AhaCue 是一个本地悬浮式算法陪练。安装后直接在应用内打开刷题页面，
 不需要浏览器插件，也不需要复制粘贴题目和代码。
 
 它不是复杂的 Agent 会话，也不是直接替用户完成题目。它尽量不打断手写过程，
@@ -44,12 +44,12 @@ Algo Companion 是一个本地悬浮式算法陪练。安装后直接在应用�
 Ubuntu/Debian 可以执行：
 
 ```bash
-sudo apt install ./algo-companion_0.4.3_amd64.deb
+sudo apt install ./algo-companion_0.4.4_amd64.deb
 ```
 
 安装后：
 
-1. 打开 Algo Companion；
+1. 打开 AhaCue；
 2. 确认仅用于个人学习或非营利教育；
 3. 在应用内登录刷题平台；
 4. 通过齿轮选择可用的免费模型，或填写自己的 API Key；
@@ -87,3 +87,5 @@ pnpm verify:public
 - 禁止用于比赛、在线考试、招聘测评、作弊或自动提交。
 
 详细条款见 [LICENSE](./LICENSE) 和 [DISCLAIMER.md](./DISCLAIMER.md)。
+
+© 2026 liuzhengxiang666. AhaCue 作者保留署名权。

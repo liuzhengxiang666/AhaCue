@@ -682,6 +682,26 @@ button.primary:hover:not(:disabled) {
   padding: 12px;
 }
 
+.author-mark {
+  display: grid;
+  gap: 2px;
+  padding: 7px 4px 1px;
+  color: #737985;
+  text-align: center;
+  user-select: none;
+}
+
+.author-mark strong {
+  color: #9298a3;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.author-mark span {
+  font-size: 11px;
+}
+
 .setting-block,
 .configured-list {
   padding: 13px;

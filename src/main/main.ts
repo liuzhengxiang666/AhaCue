@@ -70,9 +70,15 @@ let workflowState: WorkflowRuntimeState = {
   stage: "understand"
 };
 
-if (!app.isPackaged) {
-  app.setPath("userData", path.join(app.getPath("appData"), "Algo Companion Dev"));
-}
+// Keep the original data directories so upgrading to the AhaCue display name
+// does not separate users from their saved keys, attempts, and review memory.
+app.setPath(
+  "userData",
+  path.join(
+    app.getPath("appData"),
+    app.isPackaged ? "Algo Companion" : "Algo Companion Dev"
+  )
+);
 
 if (process.platform === "linux") {
   app.commandLine.appendSwitch("use-gl", "angle");
@@ -348,7 +354,7 @@ async function createWindow(): Promise<void> {
     height: 900,
     minWidth: 900,
     minHeight: 640,
-    title: "Algo Companion",
+    title: "AhaCue",
     backgroundColor: "#0b1120"
   });
 

@@ -24,5 +24,13 @@ const packageJson = JSON.parse(await readFile(path.join(root, "package.json"), "
 if (packageJson.license !== "PolyForm-Noncommercial-1.0.0") {
   throw new Error("package.json must declare PolyForm-Noncommercial-1.0.0");
 }
+if (packageJson.productName !== "AhaCue" || packageJson.author !== "liuzhengxiang666") {
+  throw new Error("package.json must preserve the AhaCue name and author attribution");
+}
+
+const disclaimer = await readFile(path.join(root, "DISCLAIMER.md"), "utf8");
+if (!disclaimer.includes("Required Notice: Copyright © 2026 liuzhengxiang666.")) {
+  throw new Error("DISCLAIMER.md is missing the author's required notice");
+}
 
 console.log("Legal files verified.");

@@ -29,17 +29,17 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({
       name: "algo_companion",
-      authors: "Algo Companion contributors",
+      authors: "liuzhengxiang666",
       description: "Local card-based algorithm practice companion"
     }),
     new MakerZIP({}, ["darwin", "win32"]),
     new MakerDeb({
       options: {
         name: "algo-companion",
-        productName: "Algo Companion",
+        productName: "AhaCue",
         genericName: "Education",
         categories: ["Education", "Development"],
-        maintainer: "Algo Companion contributors"
+        maintainer: "liuzhengxiang666"
       }
     }),
     {
