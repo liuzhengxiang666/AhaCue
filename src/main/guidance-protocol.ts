@@ -11,7 +11,7 @@ import type {
   SolutionCard
 } from "../shared/contracts";
 
-export const GUIDANCE_PROMPT_VERSION = "compact-v1";
+export const GUIDANCE_PROMPT_VERSION = "compact-v2";
 
 export interface GuidancePrompt {
   system: string;
@@ -104,6 +104,7 @@ name最多14字；action只写核心动作，最多36字；不要在方法列表
 字段只允许 method、reason、steps、apiNotes、edgeCases、snippet。
 reason用一句话说明为什么这个方法/数据结构合适，最多70字。
 steps最多4步，每步只写一个动作；edgeCases最多2条；apiNotes最多2条且对应当前语言。
+未提供所选方法但附有当前代码线索时，从代码中概括用户正在采用的方法。
 只有允许局部片段时才输出 snippet，绝不能给完整答案。`,
   implement: `输出 type="hint"。
 nextStep只指出用户此刻应该补的一个动作，不能重新讲整题。
@@ -461,6 +462,10 @@ ${request.draft.statement.slice(0, 8_000)}`;
 所选方法：${request.selectedMethod || "未提供"}
 题面：
 ${request.draft.statement.slice(0, 5_000)}
+${request.inferMethodFromCode ? `当前代码线索：
+${request.draft.code.slice(0, 12_000)}
+请让伪代码与当前代码准备采用的方法一致，方便用户放在旁边对照手写。
+` : ""}
 允许局部片段：${request.allowSnippet ? "是" : "否"}`;
       maxTokens = 650;
       break;
@@ -534,7 +539,12 @@ export function guidanceCacheIdentity(request: GuidanceRequest): string {
     language: request.draft.language,
     stage: request.stage,
     selectedMethod:
-      request.stage === "pseudocode" ? request.selectedMethod || "" : ""
+      request.stage === "pseudocode" ? request.selectedMethod || "" : "",
+    inferMethodFromCode: Boolean(request.inferMethodFromCode),
+    code:
+      request.stage === "pseudocode" && request.inferMethodFromCode
+        ? request.draft.code.slice(0, 12_000)
+        : ""
   });
 }
 

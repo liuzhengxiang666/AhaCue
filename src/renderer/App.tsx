@@ -15,6 +15,7 @@ import type {
   GuidedStartCard,
   LearningMemory,
   OverlayMode,
+  PseudocodeCard,
   PracticeContext,
   PracticeMode,
   ProviderId,
@@ -289,6 +290,22 @@ function CodeBlock({
   );
 }
 
+function PseudocodeReference({ card }: { card: PseudocodeCard }) {
+  return (
+    <aside className="pseudocode-reference" aria-label="伪代码参考">
+      <div>
+        <span>伪代码参考</span>
+        <strong>{card.method}</strong>
+      </div>
+      <ol>
+        {card.steps.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ol>
+    </aside>
+  );
+}
+
 function CompactCard({
   card,
   stage,
@@ -299,7 +316,8 @@ function CompactCard({
   onHint,
   onOpenDrawer,
   onRestart,
-  onInsert
+  onInsert,
+  keepPseudocodeVisible
 }: {
   card: GuidanceCard;
   stage: GuidanceStage;
@@ -311,6 +329,7 @@ function CompactCard({
   onOpenDrawer: () => void;
   onRestart: () => void;
   onInsert: (snippet: string) => void;
+  keepPseudocodeVisible: boolean;
 }) {
   if (card.type === "guided_start") {
     if (!revealMethods && stage === "understand") {
@@ -335,9 +354,13 @@ function CompactCard({
     );
   }
   if (card.type === "pseudocode") {
+    const handwritingStarted =
+      keepPseudocodeVisible && stage === "implement";
     return (
       <article className="compact-card">
-        <div className="stage-label">{card.method}</div>
+        <div className="stage-label">
+          {handwritingStarted ? "伪代码参考" : card.method}
+        </div>
         <p className="primary-copy">{card.reason}</p>
         <ol className="steps compact">
           {card.steps.map((step) => (
@@ -348,9 +371,13 @@ function CompactCard({
           <button
             className="primary"
             type="button"
-            onClick={onBeginHandwriting}
+            onClick={handwritingStarted ? onHint : onBeginHandwriting}
           >
-            开始手写
+            {handwritingStarted
+              ? "读取代码，提示下一步"
+              : keepPseudocodeVisible
+                ? "保留伪代码，开始手写"
+                : "开始手写"}
           </button>
           <button type="button" onClick={onOpenDrawer}>
             查看边界和 API
@@ -474,6 +501,9 @@ export function App() {
   const [testedKey, setTestedKey] = useState("");
 
   const latestCard = cards.at(-1);
+  const pseudocodeReference = [...cards]
+    .reverse()
+    .find((card): card is PseudocodeCard => card.type === "pseudocode");
   const problemKey = context?.draft ? makeProblemKey(context.draft) : "";
   const recentProblem = useMemo(
     () => snapshot?.recentProblems.find((problem) => problem.problemKey === problemKey),
@@ -649,6 +679,14 @@ export function App() {
     } else if (latestCard?.type === "hint" || latestCard?.type === "review") {
       height = 330;
     }
+    if (
+      route === "idea" &&
+      pseudocodeReference &&
+      latestCard !== pseudocodeReference &&
+      !busy
+    ) {
+      height = Math.min(560, height + 180);
+    }
     if (notice && context?.recognized && height < 400) height += 56;
     void window.practiceAPI.setOverlay({ mode: overlay, contentHeight: height });
   }, [
@@ -659,6 +697,7 @@ export function App() {
     revealMethods,
     canReview,
     latestCard?.type,
+    pseudocodeReference,
     context?.recognized
   ]);
 
@@ -712,7 +751,11 @@ export function App() {
     allowSnippet: boolean,
     allowSolution: boolean,
     method = selectedMethod,
-    options: { bypassCache?: boolean; replace?: boolean } = {}
+    options: {
+      bypassCache?: boolean;
+      replace?: boolean;
+      inferMethodFromCode?: boolean;
+    } = {}
   ) {
     await cancelActive();
     const requestId = crypto.randomUUID();
@@ -742,6 +785,7 @@ export function App() {
         mode,
         hintLevel: nextHint,
         selectedMethod: method || undefined,
+        inferMethodFromCode: options.inferMethodFromCode,
         allowSnippet,
         allowSolution,
         bypassCache: options.bypassCache,
@@ -752,6 +796,9 @@ export function App() {
           ? [...current.slice(0, -1), result.card]
           : [...current, result.card]
       );
+      if (result.card.type === "pseudocode") {
+        setSelectedMethod(result.card.method);
+      }
       if (result.cached) setNotice("已使用本地缓存，点击展开可重新生成。");
     } catch (error) {
       const message = messageOf(error);
@@ -775,11 +822,13 @@ export function App() {
     setRevealMethods(false);
     setSelectedMethod("");
     setHintLevel(0);
-    handwritingActive.current = nextRoute === "idea";
+    handwritingActive.current = false;
     if (nextRoute === "guided") {
       await ask("understand", "guided", 0, false, false, "");
     } else if (nextRoute === "idea") {
-      await ask("implement", "guided", 1, true, false, "");
+      await ask("pseudocode", "guided", 0, false, false, "", {
+        inferMethodFromCode: true
+      });
     } else if (nextRoute === "direct") {
       await ask("result", "direct", 0, false, true, "");
     } else {
@@ -828,20 +877,30 @@ export function App() {
       stage: "implement",
       selectedMethod: selectedMethod || undefined
     });
+    if (route === "idea") return;
     closeOverlay();
   }
 
   async function regenerateCurrent() {
     const mode: PracticeMode =
       route === "direct" ? "direct" : route === "review" ? "review" : "guided";
+    const regenerationStage =
+      latestCard?.type === "pseudocode" ? "pseudocode" : stage;
     await ask(
-      stage,
+      regenerationStage,
       mode,
       hintLevel,
-      stage === "pseudocode" || stage === "implement" || stage === "diagnose",
-      stage === "result",
+      regenerationStage === "pseudocode" ||
+        regenerationStage === "implement" ||
+        regenerationStage === "diagnose",
+      regenerationStage === "result",
       selectedMethod,
-      { bypassCache: true, replace: true }
+      {
+        bypassCache: true,
+        replace: true,
+        inferMethodFromCode:
+          route === "idea" && regenerationStage === "pseudocode"
+      }
     );
   }
 
@@ -1452,7 +1511,7 @@ export function App() {
                 </button>
                 <button type="button" onClick={() => void startRoute("idea")}>
                   <strong>有思路</strong>
-                  <span>只看当前代码的下一步</span>
+                  <span>看着精简伪代码继续手写</span>
                 </button>
                 <button type="button" onClick={() => void startRoute("direct")}>
                   <strong>直接看答案</strong>
@@ -1469,18 +1528,26 @@ export function App() {
           )}
 
           {!busy && latestCard && (
-            <CompactCard
-              card={latestCard}
-              stage={stage}
-              revealMethods={revealMethods}
-              onRevealMethods={showMethodSelection}
-              onMethod={(method) => void chooseMethod(method)}
-              onBeginHandwriting={beginHandwriting}
-              onHint={() => void requestHint()}
-              onOpenDrawer={() => setOverlay("drawer")}
-              onRestart={() => void startRoute("guided")}
-              onInsert={(snippet) => void mutateEditor("snippet", snippet)}
-            />
+            <>
+              {route === "idea" &&
+                pseudocodeReference &&
+                latestCard !== pseudocodeReference && (
+                  <PseudocodeReference card={pseudocodeReference} />
+                )}
+              <CompactCard
+                card={latestCard}
+                stage={stage}
+                revealMethods={revealMethods}
+                onRevealMethods={showMethodSelection}
+                onMethod={(method) => void chooseMethod(method)}
+                onBeginHandwriting={beginHandwriting}
+                onHint={() => void requestHint()}
+                onOpenDrawer={() => setOverlay("drawer")}
+                onRestart={() => void startRoute("guided")}
+                onInsert={(snippet) => void mutateEditor("snippet", snippet)}
+                keepPseudocodeVisible={route === "idea"}
+              />
+            </>
           )}
 
           {notice && context?.recognized && (

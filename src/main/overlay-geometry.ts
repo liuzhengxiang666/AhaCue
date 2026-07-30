@@ -40,6 +40,64 @@ export function collapsedOverlayShape(size = COLLAPSED_SIZE): Rect[] {
   return rows;
 }
 
+export function roundedOverlayShape(
+  width: number,
+  height: number,
+  radius = 18
+): Rect[] {
+  const safeWidth = Math.max(1, Math.floor(width));
+  const safeHeight = Math.max(1, Math.floor(height));
+  const safeRadius = Math.max(
+    1,
+    Math.min(
+      Math.floor(radius),
+      Math.floor(safeWidth / 2),
+      Math.floor(safeHeight / 2)
+    )
+  );
+  const rows: Rect[] = [];
+
+  for (let y = 0; y < safeHeight; y += 1) {
+    const edgeDistance = Math.min(y + 0.5, safeHeight - y - 0.5);
+    let inset = 0;
+    if (edgeDistance < safeRadius) {
+      const distanceFromCenter = safeRadius - edgeDistance;
+      inset = Math.max(
+        0,
+        Math.ceil(
+          safeRadius -
+            Math.sqrt(
+              Math.max(
+                0,
+                safeRadius * safeRadius -
+                  distanceFromCenter * distanceFromCenter
+              )
+            )
+        )
+      );
+    }
+    const row = {
+      x: inset,
+      y,
+      width: Math.max(1, safeWidth - inset * 2),
+      height: 1
+    };
+    const previous = rows.at(-1);
+    if (
+      previous &&
+      previous.x === row.x &&
+      previous.width === row.width &&
+      previous.y + previous.height === row.y
+    ) {
+      previous.height += 1;
+    } else {
+      rows.push(row);
+    }
+  }
+
+  return rows;
+}
+
 export function normalizeOverlayAnchor(value: unknown): OverlayAnchor {
   if (!value || typeof value !== "object") {
     return { side: "right", yRatio: 0.82 };

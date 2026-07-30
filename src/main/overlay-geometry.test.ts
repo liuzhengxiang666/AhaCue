@@ -4,6 +4,7 @@ import {
   clampDraggedBounds,
   collapsedOverlayShape,
   normalizeOverlayAnchor,
+  roundedOverlayShape,
   snapOverlayAnchor
 } from "./overlay-geometry";
 
@@ -96,5 +97,27 @@ describe("overlay geometry", () => {
           rectangle.height > 0
       )
     ).toBe(false);
+  });
+
+  it("clips expanded native windows to rounded corners", () => {
+    const shape = roundedOverlayShape(440, 420, 18);
+    const top = shape.find((rectangle) => rectangle.y === 0);
+    const middle = shape.find(
+      (rectangle) =>
+        rectangle.y <= 210 && rectangle.y + rectangle.height > 210
+    );
+
+    expect(top?.x).toBeGreaterThan(0);
+    expect(top?.width).toBeLessThan(440);
+    expect(middle).toMatchObject({ x: 0, width: 440 });
+    expect(
+      shape.every(
+        (rectangle) =>
+          rectangle.x >= 0 &&
+          rectangle.y >= 0 &&
+          rectangle.x + rectangle.width <= 440 &&
+          rectangle.y + rectangle.height <= 420
+      )
+    ).toBe(true);
   });
 });

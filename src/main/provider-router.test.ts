@@ -90,6 +90,17 @@ describe("compact guidance protocol", () => {
     expect(prompt.user).not.toContain("secret-runtime-result");
   });
 
+  it("有思路路线用当前代码生成可参考的伪代码", () => {
+    const prompt = buildGuidancePrompt(
+      request("pseudocode", { inferMethodFromCode: true })
+    );
+
+    expect(prompt.user).toContain("当前代码线索");
+    expect(prompt.user).toContain("secret-current-code");
+    expect(prompt.user).toContain("对照手写");
+    expect(prompt.user).not.toContain("secret-runtime-result");
+  });
+
   it("诊断优先携带当前代码和错误", () => {
     const prompt = buildGuidancePrompt(request("diagnose"));
 

@@ -9,12 +9,16 @@
   --panel: #15171b;
   --surface: #1c1f24;
   --surface-hover: #242830;
-  --line: #343840;
+  --line: #30343c;
+  --soft-line: rgb(255 255 255 / 9%);
   --muted: #a1a1aa;
   --text: #f4f4f5;
   --accent: #6e91ff;
   --accent-hover: #85a2ff;
   --danger: #ff6b7c;
+  --radius-panel: 18px;
+  --radius-card: 14px;
+  --radius-control: 12px;
 }
 
 * {
@@ -41,8 +45,8 @@ select {
 button {
   min-height: 40px;
   cursor: pointer;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   background: var(--surface);
   transition:
     background 120ms ease,
@@ -63,7 +67,7 @@ button:disabled {
   width: 100%;
   height: 100%;
   padding: 0;
-  background: var(--panel);
+  background: transparent;
 }
 
 .collapsed-root {
@@ -143,8 +147,8 @@ button:disabled {
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid #414650;
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-panel);
   background: var(--panel);
   box-shadow: none;
 }
@@ -167,7 +171,7 @@ button:disabled {
   align-items: center;
   gap: 8px;
   padding: 8px 10px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--soft-line);
   background: #121418;
 }
 
@@ -229,6 +233,7 @@ button:disabled {
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: #464b55 transparent;
+  background: var(--panel);
 }
 
 .bubble-content {
@@ -254,6 +259,8 @@ button:disabled {
   align-items: center;
   gap: 12px;
   padding: 11px 13px;
+  border-radius: var(--radius-card);
+  background: #1a1d22;
   text-align: left;
 }
 
@@ -311,8 +318,8 @@ button:disabled {
 .empty-state {
   padding: 24px 18px;
   text-align: center;
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-card);
   background: var(--surface);
 }
 
@@ -369,8 +376,8 @@ button:disabled {
   gap: 10px;
   padding: 12px;
   color: #e4e4e7;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-card);
   background: var(--surface);
   font-size: 13px;
   line-height: 1.5;
@@ -441,8 +448,8 @@ button:disabled {
 
 .fix-copy {
   padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   background: var(--surface);
 }
 
@@ -463,6 +470,7 @@ button:disabled {
   align-items: center;
   gap: 4px 12px;
   padding: 11px 12px;
+  border-radius: var(--radius-card);
   text-align: left;
 }
 
@@ -481,7 +489,7 @@ button:disabled {
 .method-topline small {
   padding: 2px 6px;
   color: #cbd7ff;
-  border-radius: 4px;
+  border-radius: 999px;
   background: rgb(110 145 255 / 18%);
   font-size: 11px;
 }
@@ -519,6 +527,45 @@ button:disabled {
   margin-bottom: 0;
 }
 
+.pseudocode-reference {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgb(110 145 255 / 28%);
+  border-radius: var(--radius-card);
+  background: rgb(110 145 255 / 8%);
+}
+
+.pseudocode-reference > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pseudocode-reference span {
+  color: #aabfff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pseudocode-reference strong {
+  overflow: hidden;
+  color: #e5e9f8;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pseudocode-reference ol {
+  display: grid;
+  gap: 4px;
+  margin: 9px 0 0;
+  padding-left: 20px;
+  color: #d7dae2;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -550,8 +597,8 @@ button.primary:hover:not(:disabled) {
   margin-top: 12px;
   padding: 10px 12px;
   color: #d8d9dd;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   background: #1b1e23;
   font-size: 13px;
   line-height: 1.5;
@@ -586,7 +633,7 @@ button.primary:hover:not(:disabled) {
   justify-content: space-between;
   gap: 10px;
   padding: 7px 14px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--soft-line);
   background: #17191e;
 }
 
@@ -609,8 +656,8 @@ button.primary:hover:not(:disabled) {
 
 .detail-card {
   padding: 15px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-card);
   background: #191c21;
 }
 
@@ -639,8 +686,8 @@ button.primary:hover:not(:disabled) {
   gap: 5px;
   margin-top: 12px;
   padding: 11px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   background: var(--surface);
   font-size: 13px;
   line-height: 1.5;
@@ -654,8 +701,8 @@ button.primary:hover:not(:disabled) {
 .code-block {
   margin-top: 12px;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   background: #101216;
 }
 
@@ -705,8 +752,8 @@ button.primary:hover:not(:disabled) {
 .setting-block,
 .configured-list {
   padding: 13px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-card);
   background: #191c21;
 }
 
@@ -763,8 +810,8 @@ button.primary:hover:not(:disabled) {
   min-height: 42px;
   padding: 0 11px;
   color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: 7px;
+  border: 1px solid var(--soft-line);
+  border-radius: var(--radius-control);
   outline: none;
   background: #121418;
   font-size: 14px;

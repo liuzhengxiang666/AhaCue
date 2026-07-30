@@ -46,6 +46,7 @@ const guidanceRequestSchema = z.object({
   mode: z.enum(["guided", "direct", "review"]),
   hintLevel: z.number().int().min(0).max(8),
   selectedMethod: z.string().max(200).optional(),
+  inferMethodFromCode: z.boolean().optional(),
   allowSnippet: z.boolean(),
   allowSolution: z.boolean(),
   bypassCache: z.boolean().optional(),

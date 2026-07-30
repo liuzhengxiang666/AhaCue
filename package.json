@@ -1,7 +1,7 @@
 {
   "name": "algo-companion",
   "productName": "AhaCue",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "AhaCue is a local floating algorithm practice companion with progressive guidance.",
   "author": "liuzhengxiang666",
   "repository": {

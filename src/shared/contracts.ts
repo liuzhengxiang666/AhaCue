@@ -168,6 +168,7 @@ export interface GuidanceRequest {
   mode: PracticeMode;
   hintLevel: number;
   selectedMethod?: string;
+  inferMethodFromCode?: boolean;
   allowSnippet: boolean;
   allowSolution: boolean;
   bypassCache?: boolean;

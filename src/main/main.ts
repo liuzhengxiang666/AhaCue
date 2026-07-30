@@ -34,6 +34,7 @@ import {
   clampDraggedBounds,
   collapsedOverlayShape,
   normalizeOverlayAnchor,
+  roundedOverlayShape,
   snapOverlayAnchor,
   type Rect
 } from "./overlay-geometry";
@@ -118,14 +119,12 @@ function layoutOverlay(): void {
     overlayContentHeight
   );
   overlayWindow.setBounds(bounds, false);
-  overlayWindow.setBackgroundColor(
-    overlayMode === "collapsed" ? "#00000000" : "#15171b"
-  );
+  overlayWindow.setBackgroundColor("#00000000");
   if (process.platform === "linux" || process.platform === "win32") {
     overlayWindow.setShape(
       overlayMode === "collapsed"
         ? collapsedOverlayShape(bounds.width)
-        : [{ x: 0, y: 0, width: bounds.width, height: bounds.height }]
+        : roundedOverlayShape(bounds.width, bounds.height)
     );
   }
 }
