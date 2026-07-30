@@ -1,0 +1,63 @@
+{
+  "name": "algo-companion",
+  "productName": "Algo Companion",
+  "version": "0.3.0",
+  "description": "Local floating algorithm practice companion with progressive guidance.",
+  "author": "liuzhengxiang666",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liuzhengxiang666/algo-companion.git"
+  },
+  "homepage": "https://github.com/liuzhengxiang666/algo-companion#readme",
+  "bugs": {
+    "url": "https://github.com/liuzhengxiang666/algo-companion/issues"
+  },
+  "main": ".vite/build/main.js",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "start": "electron-forge start",
+    "start:personal": "node scripts/personal-build.mjs start",
+    "package": "pnpm verify:public && electron-forge package",
+    "make": "pnpm verify:public && electron-forge make",
+    "make:personal": "node scripts/personal-build.mjs make",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "verify:legal": "node scripts/verify-legal-files.mjs",
+    "verify:public": "pnpm verify:legal && node scripts/public-release-scan.mjs",
+    "release:checksums": "node scripts/generate-checksums.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "7.11.2",
+    "@electron-forge/maker-deb": "7.11.2",
+    "@electron-forge/maker-squirrel": "7.11.2",
+    "@electron-forge/maker-zip": "7.11.2",
+    "@electron-forge/plugin-auto-unpack-natives": "7.11.2",
+    "@electron-forge/plugin-fuses": "7.11.2",
+    "@electron-forge/plugin-vite": "7.11.2",
+    "@electron-forge/shared-types": "7.11.2",
+    "@electron/fuses": "1.8.0",
+    "@reforged/maker-appimage": "5.2.0",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.4",
+    "electron": "43.2.0",
+    "typescript": "7.0.2",
+    "vite": "8.1.5",
+    "vitest": "4.1.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller"
+    ]
+  }
+}

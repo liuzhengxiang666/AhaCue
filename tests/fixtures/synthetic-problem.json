@@ -1,0 +1,8 @@
+{
+  "title": "相邻温差",
+  "statement": "给定一组虚构的每日温度，返回相邻两天温差的最大绝对值。数组至少包含两个整数。",
+  "language": "python",
+  "code": "def max_gap(values):\n    best = 0\n    return best\n",
+  "latestResult": "Wrong Answer: input [4, 9, 6], expected 5, received 0",
+  "sourceUrl": "https://leetcode.cn/problems/synthetic-temperature-gap/"
+}
