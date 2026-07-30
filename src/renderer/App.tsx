@@ -317,6 +317,9 @@ function CompactCard({
   onOpenDrawer,
   onRestart,
   onInsert,
+  onReturnToPseudocode,
+  onChangeMethod,
+  canReturnToPseudocode,
   keepPseudocodeVisible
 }: {
   card: GuidanceCard;
@@ -329,6 +332,9 @@ function CompactCard({
   onOpenDrawer: () => void;
   onRestart: () => void;
   onInsert: (snippet: string) => void;
+  onReturnToPseudocode: () => void;
+  onChangeMethod: () => void;
+  canReturnToPseudocode: boolean;
   keepPseudocodeVisible: boolean;
 }) {
   if (card.type === "guided_start") {
@@ -379,9 +385,15 @@ function CompactCard({
                 ? "保留伪代码，开始手写"
                 : "开始手写"}
           </button>
-          <button type="button" onClick={onOpenDrawer}>
-            查看边界和 API
-          </button>
+          {handwritingStarted ? (
+            <button type="button" onClick={onChangeMethod}>
+              换个方法
+            </button>
+          ) : (
+            <button type="button" onClick={onOpenDrawer}>
+              查看边界和 API
+            </button>
+          )}
         </div>
       </article>
     );
@@ -396,6 +408,11 @@ function CompactCard({
           <button className="primary" type="button" onClick={onHint}>
             再给一点提示
           </button>
+          {canReturnToPseudocode && (
+            <button type="button" onClick={onReturnToPseudocode}>
+              回看伪代码
+            </button>
+          )}
           {card.snippet && (
             <button type="button" onClick={() => onInsert(card.snippet!)}>
               插入片段
@@ -415,6 +432,11 @@ function CompactCard({
           <button className="primary" type="button" onClick={onHint}>
             换个角度提示
           </button>
+          {canReturnToPseudocode && (
+            <button type="button" onClick={onReturnToPseudocode}>
+              回看伪代码
+            </button>
+          )}
           {card.snippet && (
             <button type="button" onClick={() => onInsert(card.snippet!)}>
               插入片段
@@ -504,6 +526,9 @@ export function App() {
   const pseudocodeReference = [...cards]
     .reverse()
     .find((card): card is PseudocodeCard => card.type === "pseudocode");
+  const guidedStartReference = [...cards]
+    .reverse()
+    .find((card): card is GuidedStartCard => card.type === "guided_start");
   const problemKey = context?.draft ? makeProblemKey(context.draft) : "";
   const recentProblem = useMemo(
     () => snapshot?.recentProblems.find((problem) => problem.problemKey === problemKey),
@@ -799,7 +824,9 @@ export function App() {
       if (result.card.type === "pseudocode") {
         setSelectedMethod(result.card.method);
       }
-      if (result.cached) setNotice("已使用本地缓存，点击展开可重新生成。");
+      if (result.cached) {
+        setNotice("已从本机恢复，无需等待模型；展开后可重新生成。");
+      }
     } catch (error) {
       const message = messageOf(error);
       if (!message.includes("取消")) {
@@ -879,6 +906,85 @@ export function App() {
     });
     if (route === "idea") return;
     closeOverlay();
+  }
+
+  function returnToMenu() {
+    setCards([]);
+    setRoute("menu");
+    setStage("understand");
+    setRevealMethods(false);
+    setSelectedMethod("");
+    setHintLevel(0);
+    setNotice("");
+    handwritingActive.current = false;
+    void window.practiceAPI.setWorkflowState({
+      mode: "guided",
+      stage: "understand"
+    });
+  }
+
+  function returnToPseudocode() {
+    if (!pseudocodeReference) return;
+    const index = cards.lastIndexOf(pseudocodeReference);
+    setCards(cards.slice(0, index + 1));
+    setStage("pseudocode");
+    setNotice("已退回本地伪代码，没有调用模型。");
+    handwritingActive.current = false;
+    void window.practiceAPI.setWorkflowState({
+      mode: route === "review" ? "review" : "guided",
+      stage: "pseudocode",
+      selectedMethod: selectedMethod || pseudocodeReference.method
+    });
+  }
+
+  async function returnToMethods() {
+    handwritingActive.current = false;
+    setRoute("guided");
+    setSelectedMethod("");
+    setRevealMethods(true);
+    setNotice("");
+    if (guidedStartReference) {
+      const index = cards.lastIndexOf(guidedStartReference);
+      setCards(cards.slice(0, index + 1));
+      setStage("method");
+      setNotice("已退回本地方法列表，没有调用模型。");
+      await window.practiceAPI.setWorkflowState({
+        mode: "guided",
+        stage: "method"
+      });
+      return;
+    }
+    await ask("understand", "guided", 0, false, false, "");
+  }
+
+  async function goBackOneStep() {
+    if (busy) await cancelActive();
+    if (
+      (latestCard?.type === "hint" || latestCard?.type === "diagnosis") &&
+      pseudocodeReference
+    ) {
+      returnToPseudocode();
+      return;
+    }
+    if (latestCard?.type === "pseudocode") {
+      if (guidedStartReference) {
+        await returnToMethods();
+      } else {
+        returnToMenu();
+      }
+      return;
+    }
+    if (latestCard?.type === "guided_start" && revealMethods) {
+      setRevealMethods(false);
+      setStage("understand");
+      setNotice("");
+      await window.practiceAPI.setWorkflowState({
+        mode: "guided",
+        stage: "understand"
+      });
+      return;
+    }
+    returnToMenu();
   }
 
   async function regenerateCurrent() {
@@ -1433,14 +1539,27 @@ export function App() {
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
         >
-          <span className="drag-indicator">
-            <Icon name="grip" size={18} />
-          </span>
+          {route !== "menu" && cards.length > 0 ? (
+            <button
+              className="icon-button"
+              type="button"
+              aria-label="返回上一步"
+              onClick={() => void goBackOneStep()}
+            >
+              <Icon name="back" />
+            </button>
+          ) : (
+            <span className="drag-indicator">
+              <Icon name="grip" size={18} />
+            </span>
+          )}
           <div className="header-copy">
             <strong>{context?.draft?.title || "AhaCue"}</strong>
             <span>
               {context?.recognized && context.draft
-                ? `已识别 · ${context.draft.language.toUpperCase()}`
+                ? `已识别 · ${context.draft.language.toUpperCase()}${
+                    route === "menu" ? "" : ` · ${stageNames[stage]}`
+                  }`
                 : "进入普通题目后开始"}
             </span>
           </div>
@@ -1545,6 +1664,9 @@ export function App() {
                 onOpenDrawer={() => setOverlay("drawer")}
                 onRestart={() => void startRoute("guided")}
                 onInsert={(snippet) => void mutateEditor("snippet", snippet)}
+                onReturnToPseudocode={returnToPseudocode}
+                onChangeMethod={() => void returnToMethods()}
+                canReturnToPseudocode={Boolean(pseudocodeReference)}
                 keepPseudocodeVisible={route === "idea"}
               />
             </>

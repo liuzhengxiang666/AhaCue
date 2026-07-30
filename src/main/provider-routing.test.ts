@@ -119,6 +119,28 @@ describe("fast provider routing", () => {
     expect(requestedModels).toHaveLength(2);
   });
 
+  it("serves cached guidance even when Zen is currently disabled", async () => {
+    const database = new FakeDatabase();
+    let calls = 0;
+    const router = new ProviderRouter(
+      database as unknown as DatabaseService,
+      secrets,
+      {
+        fetch: (async () => {
+          calls += 1;
+          return successResponse();
+        }) as typeof fetch
+      }
+    );
+
+    await router.generate(guidanceRequest("cache-seed"));
+    database.settings.set("zenAccepted", "false");
+    const restored = await router.generate(guidanceRequest("cache-restore"));
+
+    expect(restored.cached).toBe(true);
+    expect(calls).toBe(1);
+  });
+
   it("uses the Zen public-key protocol without forcing unsupported JSON mode", async () => {
     const database = new FakeDatabase();
     let requestBody: Record<string, unknown> | undefined;

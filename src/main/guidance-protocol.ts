@@ -540,11 +540,7 @@ export function guidanceCacheIdentity(request: GuidanceRequest): string {
     stage: request.stage,
     selectedMethod:
       request.stage === "pseudocode" ? request.selectedMethod || "" : "",
-    inferMethodFromCode: Boolean(request.inferMethodFromCode),
-    code:
-      request.stage === "pseudocode" && request.inferMethodFromCode
-        ? request.draft.code.slice(0, 12_000)
-        : ""
+    inferMethodFromCode: Boolean(request.inferMethodFromCode)
   });
 }
 

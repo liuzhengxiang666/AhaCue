@@ -405,12 +405,6 @@ export class ProviderRouter {
     request: GuidanceRequest,
     onProgress?: (progress: GuidanceProgress) => void
   ): Promise<GuidanceProviderResult> {
-    if (this.database.getSetting("zenAccepted") !== "true") {
-      throw new ProviderFailure(
-        "请先在齿轮中启用 Zen 免费通道。",
-        "ZEN_TERMS_REQUIRED"
-      );
-    }
     this.cancel(request.requestId);
     const controller = new AbortController();
     this.activeRequests.set(request.requestId, controller);
@@ -437,6 +431,13 @@ export class ProviderRouter {
             // A prompt-version cache miss will normally avoid this path.
           }
         }
+      }
+
+      if (this.database.getSetting("zenAccepted") !== "true") {
+        throw new ProviderFailure(
+          "请先在齿轮中启用 Zen 免费通道。",
+          "ZEN_TERMS_REQUIRED"
+        );
       }
 
       const prompt = buildGuidancePrompt(request);
@@ -834,4 +835,8 @@ export class ProviderRouter {
   }
 }
 
-export { buildGuidancePrompt, normalizeGuidanceCard };
+export {
+  buildGuidancePrompt,
+  guidanceCacheIdentity,
+  normalizeGuidanceCard
+};

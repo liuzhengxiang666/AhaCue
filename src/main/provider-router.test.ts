@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { GuidanceRequest } from "../shared/contracts";
 import {
   buildGuidancePrompt,
+  guidanceCacheIdentity,
   normalizeGuidanceCard
 } from "./provider-router";
 
@@ -99,6 +100,22 @@ describe("compact guidance protocol", () => {
     expect(prompt.user).toContain("secret-current-code");
     expect(prompt.user).toContain("对照手写");
     expect(prompt.user).not.toContain("secret-runtime-result");
+  });
+
+  it("有思路伪代码缓存不会因继续手写而失效", () => {
+    const first = request("pseudocode", { inferMethodFromCode: true });
+    const later = {
+      ...first,
+      requestId: "request-pseudocode-later",
+      draft: {
+        ...first.draft,
+        code: "class Solution { /* much-more-code */ };"
+      }
+    };
+
+    expect(guidanceCacheIdentity(later)).toBe(
+      guidanceCacheIdentity(first)
+    );
   });
 
   it("诊断优先携带当前代码和错误", () => {

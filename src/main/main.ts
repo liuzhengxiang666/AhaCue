@@ -47,6 +47,7 @@ declare const MAIN_WINDOW_VITE_NAME: string;
 
 const DEFAULT_URL = "https://leetcode.cn/problemset/";
 const OVERLAY_ANCHOR_SETTING = "overlayAnchor";
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 let mainWindow: BaseWindow | undefined;
 let browserView: WebContentsView | undefined;
@@ -480,13 +481,25 @@ async function createWindow(): Promise<void> {
   }
 }
 
-app.whenReady().then(async () => {
-  Menu.setApplicationMenu(null);
-  await createWindow();
-  app.on("activate", () => {
-    if (!mainWindow) void createWindow();
+if (!hasSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (!mainWindow) return;
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+    syncOverlayVisibility();
   });
-});
+
+  app.whenReady().then(async () => {
+    Menu.setApplicationMenu(null);
+    await createWindow();
+    app.on("activate", () => {
+      if (!mainWindow) void createWindow();
+    });
+  });
+}
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
