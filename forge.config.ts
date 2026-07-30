@@ -8,13 +8,11 @@ import { FusesPlugin } from "@electron-forge/plugin-fuses";
 import { VitePlugin } from "@electron-forge/plugin-vite";
 import { FuseV1Options, FuseVersion } from "@electron/fuses";
 
-const personalAdapter =
-  process.env.ALGO_COMPANION_PERSONAL_BUILD === "1"
-    ? path.resolve(
-        process.env.ALGO_COMPANION_ADAPTER_PATH ||
-          path.join(process.cwd(), "..", "Act-private", "leetcode-cn-adapter.cjs")
-      )
-    : undefined;
+const pageAdapter = path.resolve(
+  process.cwd(),
+  "adapters",
+  "leetcode-cn.cjs"
+);
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -24,7 +22,7 @@ const config: ForgeConfig = {
       "LICENSE",
       "DISCLAIMER.md",
       "THIRD_PARTY_NOTICES.md",
-      ...(personalAdapter ? [personalAdapter] : [])
+      pageAdapter
     ]
   },
   rebuildConfig: {},

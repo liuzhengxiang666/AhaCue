@@ -57,9 +57,11 @@ function adapterPath(): string | undefined {
   const configured = process.env.ALGO_COMPANION_ADAPTER_PATH?.trim();
   if (configured) return path.resolve(configured);
   if (app.isPackaged) {
-    const bundled = path.join(process.resourcesPath, "leetcode-cn-adapter.cjs");
+    const bundled = path.join(process.resourcesPath, "leetcode-cn.cjs");
     if (existsSync(bundled)) return bundled;
   }
+  const integrated = path.join(app.getAppPath(), "adapters", "leetcode-cn.cjs");
+  if (existsSync(integrated)) return integrated;
   return undefined;
 }
 
@@ -79,7 +81,7 @@ async function loadAdapter(): Promise<AutomaticAdapterModule | undefined> {
     typeof candidate.insertSnippet !== "function" ||
     typeof candidate.replaceCode !== "function"
   ) {
-    throw new Error("本地自动适配器格式不正确。");
+    throw new Error("内置页面识别模块格式不正确。");
   }
   return candidate;
 }
@@ -128,7 +130,7 @@ export class PlatformAdapterHost {
     if (!this.loadedAdapter) {
       return {
         recognized: false,
-        reason: "个人自动适配器尚未加载。",
+        reason: "内置页面识别模块尚未加载。",
         capturedAt: new Date().toISOString()
       };
     }
@@ -231,7 +233,7 @@ export class PlatformAdapterHost {
   }
 
   private requireAdapter(): AutomaticAdapterModule {
-    if (!this.loadedAdapter) throw new Error("个人自动适配器尚未加载。");
+    if (!this.loadedAdapter) throw new Error("内置页面识别模块尚未加载。");
     if (!this.loadedAdapter.supports(this.contents.getURL())) {
       throw new Error("当前页面不支持自动编辑。");
     }

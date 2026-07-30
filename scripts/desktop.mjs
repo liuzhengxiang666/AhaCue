@@ -6,17 +6,7 @@ import process from "node:process";
 const root = process.cwd();
 const action = process.argv[2] || "start";
 if (!["start", "package", "make"].includes(action)) {
-  throw new Error(`Unsupported personal build action: ${action}`);
-}
-
-const configured = process.env.ALGO_COMPANION_ADAPTER_PATH?.trim();
-const adapter = path.resolve(
-  configured || path.join(root, "..", "Act-private", "leetcode-cn-adapter.cjs")
-);
-if (!existsSync(adapter)) {
-  throw new Error(
-    `个人自动适配器不存在：${adapter}\n请先准备本地适配器，再启动个人版本。`
-  );
+  throw new Error(`Unsupported desktop action: ${action}`);
 }
 
 const forgeCli = path.join(
@@ -52,9 +42,7 @@ function findLinuxSandbox() {
 }
 
 const childEnv = {
-  ...process.env,
-  ALGO_COMPANION_ADAPTER_PATH: adapter,
-  ALGO_COMPANION_PERSONAL_BUILD: "1"
+  ...process.env
 };
 delete childEnv.ELECTRON_RUN_AS_NODE;
 const linuxSandbox = findLinuxSandbox();

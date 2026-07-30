@@ -419,19 +419,19 @@ async function createWindow(): Promise<void> {
       adapterHost?.readContext() ??
       Promise.resolve({
         recognized: false,
-        reason: "自动适配器尚未初始化。",
+        reason: "页面识别模块尚未初始化。",
         capturedAt: new Date().toISOString()
       }),
     insertSnippet: (snippet) => {
-      if (!adapterHost) throw new Error("自动适配器尚未初始化。");
+      if (!adapterHost) throw new Error("页面识别模块尚未初始化。");
       return adapterHost.insertSnippet(snippet);
     },
     replaceSolution: (code) => {
-      if (!adapterHost) throw new Error("自动适配器尚未初始化。");
+      if (!adapterHost) throw new Error("页面识别模块尚未初始化。");
       return adapterHost.replaceSolution(code);
     },
     undoEditorChange: () => {
-      if (!adapterHost) throw new Error("自动适配器尚未初始化。");
+      if (!adapterHost) throw new Error("页面识别模块尚未初始化。");
       return adapterHost.undo();
     },
     quitApp: () => app.quit()

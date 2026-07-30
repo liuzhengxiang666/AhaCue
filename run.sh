@@ -14,4 +14,4 @@ else
 fi
 
 "${algo_package_runner[@]}" install --frozen-lockfile --prefer-offline
-exec "${algo_package_runner[@]}" start:personal
+exec "${algo_package_runner[@]}" start

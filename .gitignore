@@ -13,8 +13,5 @@ SHA256SUMS.txt
 .idea/
 .vscode/
 *.code-workspace
-leetcode-cn-adapter.cjs
-Act-private/
-.private/
 provider-secrets.json
 .DS_Store

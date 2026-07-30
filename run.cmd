@@ -6,7 +6,7 @@ where pnpm >nul 2>nul
 if %errorlevel%==0 (
   call pnpm install --frozen-lockfile --prefer-offline
   if errorlevel 1 exit /b 1
-  call pnpm start:personal
+  call pnpm start
   exit /b %errorlevel%
 )
 
@@ -14,7 +14,7 @@ where corepack >nul 2>nul
 if %errorlevel%==0 (
   call corepack pnpm install --frozen-lockfile --prefer-offline
   if errorlevel 1 exit /b 1
-  call corepack pnpm start:personal
+  call corepack pnpm start
   exit /b %errorlevel%
 )
 
