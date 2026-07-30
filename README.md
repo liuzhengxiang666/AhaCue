@@ -1,6 +1,6 @@
 # AhaCue
 
-[![CI](https://github.com/liuzhengxiang666/algo-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/liuzhengxiang666/algo-companion/actions/workflows/ci.yml)
+[![CI](https://github.com/liuzhengxiang666/AhaCue/actions/workflows/ci.yml/badge.svg)](https://github.com/liuzhengxiang666/AhaCue/actions/workflows/ci.yml)
 
 > Source-available for noncommercial use; not OSI-approved open source.
 
@@ -35,7 +35,7 @@ AhaCue 是一个本地悬浮式算法陪练。安装后直接在应用内打开�
 
 ## 安装使用
 
-在 [GitHub Releases](https://github.com/liuzhengxiang666/algo-companion/releases)
+在 [GitHub Releases](https://github.com/liuzhengxiang666/AhaCue/releases)
 下载适合系统的安装包：
 
 - Windows：下载 `.exe` 安装程序；
@@ -62,8 +62,8 @@ sudo apt install ./algo-companion_0.4.6_amd64.deb
 环境要求：Node.js 20.20 或更高版本。
 
 ```bash
-git clone https://github.com/liuzhengxiang666/algo-companion.git
-cd algo-companion
+git clone https://github.com/liuzhengxiang666/AhaCue.git
+cd AhaCue
 chmod +x run.sh
 ./run.sh
 ```

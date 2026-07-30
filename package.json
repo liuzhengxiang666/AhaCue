@@ -6,11 +6,11 @@
   "author": "liuzhengxiang666",
   "repository": {
     "type": "git",
-    "url": "https://github.com/liuzhengxiang666/algo-companion.git"
+    "url": "https://github.com/liuzhengxiang666/AhaCue.git"
   },
-  "homepage": "https://github.com/liuzhengxiang666/algo-companion#readme",
+  "homepage": "https://github.com/liuzhengxiang666/AhaCue#readme",
   "bugs": {
-    "url": "https://github.com/liuzhengxiang666/algo-companion/issues"
+    "url": "https://github.com/liuzhengxiang666/AhaCue/issues"
   },
   "main": ".vite/build/main.js",
   "private": true,
