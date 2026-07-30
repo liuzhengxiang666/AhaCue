@@ -1,7 +1,7 @@
 {
   "name": "algo-companion",
   "productName": "Algo Companion",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Local floating algorithm practice companion with progressive guidance.",
   "author": "liuzhengxiang666",
   "repository": {
@@ -48,6 +48,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.4",
     "electron": "43.2.0",
+    "lodash": "4.18.1",
     "typescript": "7.0.2",
     "vite": "8.1.5",
     "vitest": "4.1.10"
